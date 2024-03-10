@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.UI;
+using TMPro;
 using Random = UnityEngine.Random;
 
 namespace CrewmateInterview
@@ -15,6 +17,9 @@ namespace CrewmateInterview
         [SerializeField] private List<Crewmate> crewmates;
         [SerializeField] private CrewmateNames crewmateNames;
         [SerializeField] private List<Sprite> crewmateImages;
+
+        //Object Reference
+        [SerializeField] private TMP_Text textRepOfCrewmates;
 
         //Player Fields
         [Header("Player Fields")]
@@ -100,6 +105,7 @@ namespace CrewmateInterview
                     }
                 }
                 amtOfPlayerCrewmates -= amtOfCrewLost;
+                textRepOfCrewmates.text = amtOfPlayerCrewmates.ToString();
                 Debug.Log("Oh no, " + curCrewmate.crewmateFirstName + " was an alien parasite!, you lost " + amtOfCrewLost + " crew members");
             }
             else
@@ -109,6 +115,7 @@ namespace CrewmateInterview
                 crewmates.Remove(curCrewmate);
                 crewmates.Add(CreateCrewmate());
                 amtOfPlayerCrewmates++;
+                textRepOfCrewmates.text = amtOfPlayerCrewmates.ToString();
             }
         }
         private void EndGame()
