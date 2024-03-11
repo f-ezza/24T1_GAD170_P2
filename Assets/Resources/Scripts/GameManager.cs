@@ -5,9 +5,11 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using Random = UnityEngine.Random;
+using System.Collections;
 
 namespace CrewmateInterview
 {
+    public enum RoundState { start, mid, end};
     public class GameManager : MonoBehaviour
     {
         //Crewmate Generation
@@ -19,7 +21,21 @@ namespace CrewmateInterview
         [SerializeField] private List<Sprite> crewmateImages;
 
         //Object Reference
+        [Header("Object References")]
         [SerializeField] private TMP_Text textRepOfCrewmates;
+        [SerializeField] private Animator animator;
+        [SerializeField] private GameObject folderPrefab;
+        [SerializeField] private GameObject curFolder;
+        [SerializeField] private KeyCode curKey;
+        [SerializeField] private GameObject particleCannon;
+
+        //UI References
+        [Header("UI Object References")]
+        [SerializeField] private GameObject crewmateUI;
+        [SerializeField] private Image crewmateHeadshotImage;
+        [SerializeField] private TMP_Text textCrewmateName;
+        [SerializeField] private TMP_Text textCrewmateHobby;
+        [SerializeField] private GameObject finishedGO;
 
         //Player Fields
         [Header("Player Fields")]
@@ -33,6 +49,10 @@ namespace CrewmateInterview
         [SerializeField] private bool haveCurCrewmate;
         [SerializeField] private bool gameEnded;
 
+        //Identifiers
+        [SerializeField] private RoundState roundState;
+
+
 
 
 
@@ -43,50 +63,79 @@ namespace CrewmateInterview
             crewmates = new List<Crewmate>();
             playerCrewmates = new List<Crewmate>();
             CreateRandomCrewmates();
+            crewmateUI.SetActive(false);
+            finishedGO.SetActive(false);
+            particleCannon.SetActive(false);
         }
 
         private void Update()
         {
-            if(gameEnded) { return; }
+            if(gameEnded) { crewmateUI.SetActive(false);  return; }
             if (crewmates == null) { CreateRandomCrewmates(); return; }
             if (playerCrewmates.Count >= 10)
             {
                 EndGame();
+                crewmateUI.SetActive(false);
                 gameEnded = true;
             }
-            else if (!isRoundInProgress)
+
+            if (!isRoundInProgress)
             {
-                isRoundInProgress = true;
-                Debug.Log("Started Round");
+                if (curFolder == null)
+                {
+                    curFolder = Instantiate(folderPrefab);
+                    animator = curFolder.GetComponent<Animator>();
+                    roundState = RoundState.start;
+                    isRoundInProgress = true;
+                }
             }
 
-            if (isRoundInProgress)
+            if (isRoundInProgress && !haveCurCrewmate)
             {
-                if (!haveCurCrewmate) 
+                haveCurCrewmate = true;
+                curCrewmate = GetRandomCrewmate();
+                roundState = RoundState.mid;
+                crewmateUI.SetActive(true);
+            }
+
+            if (isRoundInProgress && (Input.GetKeyUp(KeyCode.E) || Input.GetKeyUp(KeyCode.Q)))
+            {
+                roundState = RoundState.end;
+                crewmateUI.SetActive(false);
+                EndRound(Input.GetKeyUp(KeyCode.E) ? KeyCode.E : KeyCode.Q);
+                
+            }
+            if(roundState == RoundState.end)
+            {
+                EndRound(curKey);
+            }
+        }
+
+
+        #region - Start Selection Round -
+        private void EndRound(KeyCode key)
+        {
+            curKey = key;
+            animator.Play("Exit");
+            if (animator.GetCurrentAnimatorStateInfo(0).normalizedTime > 1f)
+            {
+                if (key == KeyCode.Q)
                 {
-                    haveCurCrewmate = true;
-                    curCrewmate = GetRandomCrewmate();    
-                }
-                if (Input.GetKeyDown(KeyCode.E))
-                {
-                    Debug.Log("Pressed 'E'");
-                    AddCrewmateToPlayerCollection(curCrewmate);
-                    haveCurCrewmate = false;
-                    isRoundInProgress = false;
-                }
-                else if (Input.GetKeyDown(KeyCode.Q))
-                {
-                    Debug.Log("Pressed 'Q'");
                     crewmates.Remove(curCrewmate);
                     crewmates.Add(CreateCrewmate());
                     haveCurCrewmate = false;
                     isRoundInProgress = false;
                 }
+                else if (key == KeyCode.E)
+                {
+                    AddCrewmateToPlayerCollection(curCrewmate);
+                    haveCurCrewmate = false;
+                    isRoundInProgress = false;
+                }
+                Destroy(curFolder);
             }
+
         }
-
-        #region - Start Selection Round -
-
         private void AddCrewmateToPlayerCollection(Crewmate curCrewmate)
         {
             if (curCrewmate.isParasite)
@@ -126,12 +175,16 @@ namespace CrewmateInterview
             {
                 Debug.Log("Name: " + playerCrewmates[i].crewmateFirstName + " " + playerCrewmates[i].crewmateLastName + ", Hobby: " + playerCrewmates[i].hobby.ToString());
             }
+            particleCannon.SetActive(true);
+            finishedGO.SetActive(true);
         }
 
         private Crewmate GetRandomCrewmate()
         {
-            Debug.Log(crewmates.Count);
             Crewmate curCrewmate = crewmates[Random.Range(0, crewmates.Count)];
+            crewmateHeadshotImage.sprite = curCrewmate.crewmateImage;
+            textCrewmateName.text = (curCrewmate.crewmateFirstName + " " + curCrewmate.crewmateLastName);
+            textCrewmateHobby.text = curCrewmate.hobby.ToString();
             return curCrewmate;
         }
         #endregion
@@ -161,5 +214,15 @@ namespace CrewmateInterview
             return curCrewmate;
         }
         #endregion
+
+        #region - Identifiers -
+        public RoundState GetRoundState()
+        {
+            return roundState;
+        }
+
+        #endregion
     }
+
+
 }
