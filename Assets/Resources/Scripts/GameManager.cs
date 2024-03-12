@@ -15,7 +15,6 @@ namespace CrewmateInterview
         [SerializeField] private int numOfCrewmates;
         [SerializeField] private List<Crewmate> crewmates;
         [SerializeField] private CrewmateNames crewmateNames;
-        [SerializeField] private List<Sprite> crewmateImages;
 
         //Object Reference
         [Header("Object References")]
@@ -51,20 +50,58 @@ namespace CrewmateInterview
 
 
 
-
-
+        #region - Initalisation -
+        /*
+        []---Awake Method---[]
+        []The Awake Method does the following: 
+        []It assigns a new Object Class that contains all the crew mate names
+        []It initalises a new instance of a crewmates list to hold information on the soon to be generated crewmates
+        []It initalises a new instance of a Crewmates list to hold the information of the players accquired crewmates
+        []It hides the ui
+        []It hides to game end text
+        []It hides the particle emitter
+        []---Conclusion of Awake Method---[]
+        */
         private void Awake()
         {
-            crewmateImages = new List<Sprite>(Resources.LoadAll<Sprite>("UI/Sprites"));
             crewmateNames = new CrewmateNames();
             crewmates = new List<Crewmate>();
             playerCrewmates = new List<Crewmate>();
-            CreateRandomCrewmates();
+
             crewmateUI.SetActive(false);
             finishedGO.SetActive(false);
             particleCannon.SetActive(false);
-        }
 
+            CreateRandomCrewmates();
+        }
+        #endregion
+
+        #region - Update Method - 
+        /*
+        []---Update Method---[]
+
+        []---First Block---[]
+        []Checks if the game has ended, if it has, it hides the UI of the current crewmate and returns to silence the update method
+        []Checks if the list of global crewmates is null (not populated), it then fills the list up via calling CreateRandomCrewmates() and returning
+        []Checks if the Players accquired crewmate list is = or greater than 10, if so it will call the EndGame() method, set the current crewmate ui display to false and sets gameEnded to false
+        []---End First Block---[]
+
+        []---Second Block---[]
+        []Checks if a round is in progress (round refering to the player selecting if they wish to hire the crewmate or not), if it isnt it moves on to check if the curFolder which is a gameobject from a prefab is in existance
+        []If the curFolder is not existing or null it then instantiates a new one from the provided folder prefab, accquires a new animator component gotten from the curfolder, sets the roundState to RoundState.start nad then sets isRoundInProgress to true
+        []---End Second Block---[]
+
+        []---Third Block---[]
+        []Checks if a round is in progress and that we dont have a current crewmate
+        []If the check is true we then set that we have a crewmate and then assign a curCrewmate (a gameobject variable) based on the return provided by the GetRandomCrewmate() method, set the round state to mid and activate the uiof the crewmates information
+        []---End Third Block---[]
+
+        []---Fourth Block---[]
+        []We check if there is a round in progress and if the player has pressed keys e or q
+        []If they have, we change round state to end, disable the ui of the current crewmate and then call the endRound function passing in the key that was pressed
+        []We then check if the roundstate set to end and if so, we call endround again
+        []---End Forth Block---[]
+        */
         private void Update()
         {
             if(gameEnded) { crewmateUI.SetActive(false);  return; }
@@ -107,9 +144,23 @@ namespace CrewmateInterview
                 EndRound(curKey);
             }
         }
+        #endregion
 
 
         #region - Start Selection Round -
+        /*
+        []---End Round Method---[]
+
+        []---First Block---[]
+        []First we assign curKey to the key that was passed through in the call method
+        []we then play the animation "Exit" which is retrieved by the previously called animator object assigned in 2nd block in update
+        []We then check if the animation has finished playing and if so we then check if the key pressed was q or e
+        []If it was Q we remove the crewmate from the active pool of potential crewmates to display and add another one through the method CreateCrewmate() and is added to the global crewmates list
+        []We then set that we no longer have a valid current crewmate by assigning that to false and that the round has ended
+        []If it was E we AddCrewmateToPlayerCollection using that method by passing in the curCrewmate, we then set that we dont have a current crewmate and that the round has ended
+        []We then remove current folder (this will set curFolder to null)
+        []---End First Block---[]
+        */
         private void EndRound(KeyCode key)
         {
             curKey = key;
@@ -133,6 +184,13 @@ namespace CrewmateInterview
             }
 
         }
+
+        /*
+        []--- AddCrewmateToPlayerCollection Method ---[]
+        []We first check if the passed in crewmate is a parasite, if the crewmate is a parasite we assign a new variable of type integer to keep track 
+        []We then check if the player list of crewmates total numbers is equal to 
+        */
+
         private void AddCrewmateToPlayerCollection(Crewmate curCrewmate)
         {
             if (curCrewmate.isParasite)
