@@ -899,8 +899,8 @@ PlayerSettings:
   apiCompatibilityLevelPerPlatform: {}
   m_RenderingPath: 1
   m_MobileRenderingPath: 1
-  metroPackageName: 24T1_GAD170_P2
-  metroPackageVersion: 
+  metroPackageName: 24T1GAD170P2
+  metroPackageVersion: 1.0.0.0
   metroCertificatePath: 
   metroCertificatePassword: 
   metroCertificateSubject: 
@@ -908,7 +908,7 @@ PlayerSettings:
   metroCertificateNotAfter: 0000000000000000
   metroApplicationDescription: 24T1_GAD170_P2
   wsaImages: {}
-  metroTileShortName: 
+  metroTileShortName: 24T1_GAD170_P2
   metroTileShowName: 0
   metroMediumTileShowName: 0
   metroLargeTileShowName: 0

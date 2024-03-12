@@ -1,11 +1,8 @@
-using System;
+using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
-using Random = UnityEngine.Random;
-using System.Collections;
 
 namespace CrewmateInterview
 {
@@ -32,8 +29,8 @@ namespace CrewmateInterview
         //UI References
         [Header("UI Object References")]
         [SerializeField] private GameObject crewmateUI;
-        [SerializeField] private Image crewmateHeadshotImage;
-        [SerializeField] private TMP_Text textCrewmateName;
+        [SerializeField] private TMP_Text textCrewmateLastName;
+        [SerializeField] private TMP_Text textCrewmateFirstName;
         [SerializeField] private TMP_Text textCrewmateHobby;
         [SerializeField] private GameObject finishedGO;
 
@@ -182,8 +179,8 @@ namespace CrewmateInterview
         private Crewmate GetRandomCrewmate()
         {
             Crewmate curCrewmate = crewmates[Random.Range(0, crewmates.Count)];
-            crewmateHeadshotImage.sprite = curCrewmate.crewmateImage;
-            textCrewmateName.text = (curCrewmate.crewmateFirstName + " " + curCrewmate.crewmateLastName);
+            textCrewmateFirstName.text = curCrewmate.crewmateFirstName;
+            textCrewmateLastName.text = curCrewmate.crewmateLastName;
             textCrewmateHobby.text = curCrewmate.hobby.ToString();
             return curCrewmate;
         }
@@ -208,7 +205,6 @@ namespace CrewmateInterview
             Crewmate curCrewmate = new Crewmate();
             curCrewmate.crewmateFirstName = crewmateNames.firstNames[Random.Range(1, crewmateNames.firstNames.Length)];
             curCrewmate.crewmateLastName = crewmateNames.lastNames[Random.Range(1, crewmateNames.lastNames.Length)];
-            curCrewmate.crewmateImage = crewmateImages[Random.Range(0, crewmateImages.Count)];
             curCrewmate.hobby = (Hobbies)Random.Range(0, 5);
             curCrewmate.isParasite = (Random.Range(0f, 1f) <= parasiteChance) ? true : false;
             return curCrewmate;
