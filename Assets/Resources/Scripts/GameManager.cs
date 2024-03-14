@@ -186,10 +186,28 @@ namespace CrewmateInterview
         }
 
         /*
-        []--- AddCrewmateToPlayerCollection Method ---[]
+        []---AddCrewmateToPlayerCollection Method---[]
+        []---First Block---[]
         []We first check if the passed in crewmate is a parasite, if the crewmate is a parasite we assign a new variable of type integer to keep track 
-        []We then check if the player list of crewmates total numbers is equal to 
-        */
+        []We then check if the player list of crewmates total numbers is greater or equal to 1 and that it is a valid list
+        []We then loop over the amount of entries and check if the current crewmate in the loop has the same hobby as the crewmate that is a parasite
+        []If they are the same then we delete the crewmember from the players crew and then add add a new crewmember to the global list
+        []We then add the amount of crew lost by 1
+        []After the loop ends, we deduct the visual display of the number of crewmates the player has
+        []Update the text
+        []Debug.Log out that the crewmate we selected was a parasite and then how many we lost
+        []---End First Block---[]
+
+        []---Second Block---[]
+        []If the crewmate isnt a parasite we do this
+        []Log out that we added the crewmember tot he players list of crewmembers
+        []Add the crewmember to the list of players crew
+        []Remove the current crewmate from the global list of crewmembers
+        []Generate a new crewmember and add them to the global list of crewmates
+        []Add by 1 the amount of crewmembers the player has
+        []Update the text of player crewmembers
+        []---End Second Block---[]
+         */
 
         private void AddCrewmateToPlayerCollection(Crewmate curCrewmate)
         {
@@ -222,6 +240,15 @@ namespace CrewmateInterview
                 textRepOfCrewmates.text = amtOfPlayerCrewmates.ToString();
             }
         }
+        /*
+        []---EndGame Method---[]
+        []Log out that the player won
+        []Log out a header
+        []Log out the players crewmembers by looping over it and printing the current crewmembers valus
+        []Turn the particle emitter on
+        []Set the finished text on
+        []---End EndGame Method---[]
+         */
         private void EndGame()
         {
             Debug.Log("You won!");
@@ -234,6 +261,14 @@ namespace CrewmateInterview
             finishedGO.SetActive(true);
         }
 
+
+        /*
+        []---GetRandomCrewmate Method---[]
+        []Create a new object of type Crewmate and set it equal to a random crewmate in the global crewmate list
+        []Assign the visual texts to the value of the randomly gathered crewmember
+        []Return the crewmember to whatever called the method
+        []---End GetRandomCrewmate Method---[]
+         */
         private Crewmate GetRandomCrewmate()
         {
             Crewmate curCrewmate = crewmates[Random.Range(0, crewmates.Count)];
@@ -246,6 +281,13 @@ namespace CrewmateInterview
 
 
         #region - Create Pool Of Crewmates -
+        /*
+        []---CreateRandomCrewmates Method---[]
+        []Instantiate a new list of crewmates
+        []Loop over the number of wanted crew members of the game, in default its 10
+        []Add the current crewmate generated using the CreateCrewmate Method
+        []---End CreateRandomCrewmates---[]
+         */
         private void CreateRandomCrewmates()
         {
             crewmates = new List<Crewmate>(); //Instantiate the list
@@ -258,6 +300,13 @@ namespace CrewmateInterview
 
         }
 
+        /*
+        []---CreateCrewmate Method---[]
+        []Create a new local crewmate by copying the template from the crewmate class
+        []Assign the variables of firstname, lastname, hobby and if they are a parasite
+        []Return the newly created crewmate
+        []---End CreateCrewmate Method---[]
+         */
         private Crewmate CreateCrewmate()
         {
             Crewmate curCrewmate = new Crewmate();
@@ -270,6 +319,11 @@ namespace CrewmateInterview
         #endregion
 
         #region - Identifiers -
+        /*
+        []---GetRoundState---[]
+        []Check what the state of the game is in
+        []---End GetRoundState---[]
+        */
         public RoundState GetRoundState()
         {
             return roundState;

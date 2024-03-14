@@ -25,6 +25,7 @@ namespace CrewmateInterview
 
         private void Update()
         {
+            //Set the animation variable bools depending on the current state of the game
             switch(gameManager.GetRoundState())
             {
                 case RoundState.start:
