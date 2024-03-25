@@ -7,6 +7,7 @@ using TMPro;
 namespace CrewmateInterview
 {
     public enum RoundState { start, mid, end};
+    
     public class GameManager : MonoBehaviour
     {
         //Crewmate Generation
@@ -211,33 +212,40 @@ namespace CrewmateInterview
 
         private void AddCrewmateToPlayerCollection(Crewmate curCrewmate)
         {
-            if (curCrewmate.isParasite)
+            if(curCrewmate != null) 
             {
-                int amtOfCrewLost = 0;
-                if (playerCrewmates.Count >= 1 && playerCrewmates != null)
+                if (curCrewmate.isParasite)
                 {
-                    for (int i = 0; i < playerCrewmates.Count; i++)
+                    int amtOfCrewLost = 0;
+                    if (playerCrewmates.Count >= 1 && playerCrewmates != null)
                     {
-                        if (playerCrewmates[i].hobby == curCrewmate.hobby)
+                        for (int i = 0; i < playerCrewmates.Count; i++)
                         {
-                            playerCrewmates.RemoveAt(i);
-                            crewmates.Add(CreateCrewmate());
-                            amtOfCrewLost++;
+                            if (playerCrewmates[i].hobby == curCrewmate.hobby)
+                            {
+                                playerCrewmates.RemoveAt(i);
+                                crewmates.Add(CreateCrewmate());
+                                amtOfCrewLost++;
+                            }
                         }
                     }
+                    amtOfPlayerCrewmates -= amtOfCrewLost;
+                    textRepOfCrewmates.text = amtOfPlayerCrewmates.ToString();
+                    Debug.Log("Oh no, " + curCrewmate.crewmateFirstName + " was an alien parasite!, you lost " + amtOfCrewLost + " crew members");
                 }
-                amtOfPlayerCrewmates -= amtOfCrewLost;
-                textRepOfCrewmates.text = amtOfPlayerCrewmates.ToString();
-                Debug.Log("Oh no, " + curCrewmate.crewmateFirstName + " was an alien parasite!, you lost " + amtOfCrewLost + " crew members");
+                else
+                {
+                    Debug.Log("Added " + curCrewmate.crewmateFirstName + " to your crew.");
+                    playerCrewmates.Add(curCrewmate);
+                    crewmates.Remove(curCrewmate);
+                    crewmates.Add(CreateCrewmate());
+                    amtOfPlayerCrewmates++;
+                    textRepOfCrewmates.text = amtOfPlayerCrewmates.ToString();
+                }
             }
             else
             {
-                Debug.Log("Added " + curCrewmate.crewmateFirstName + " to your crew.");
-                playerCrewmates.Add(curCrewmate);
-                crewmates.Remove(curCrewmate);
-                crewmates.Add(CreateCrewmate());
-                amtOfPlayerCrewmates++;
-                textRepOfCrewmates.text = amtOfPlayerCrewmates.ToString();
+                Debug.Log("Crewmate is not valid!"); return;
             }
         }
         /*
@@ -324,9 +332,12 @@ namespace CrewmateInterview
         []Check what the state of the game is in
         []---End GetRoundState---[]
         */
-        public RoundState GetRoundState()
+        public RoundState GetRoundState
         {
-            return roundState;
+            get 
+            {
+                return roundState;
+            }
         }
 
         #endregion
